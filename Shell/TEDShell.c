@@ -76,17 +76,21 @@ void readline(char* buffer){
     buffer[strcspn(buffer, "\n")] = 0;
 }
 
+//split the command into an array of params
 int parsecmd(char* input, char** params) {
-    
+    int n =0;
     for(int i = 0; i < MAX_PARAMS; i++) {
         params[i] = strsep(&input, " "); // ";" sildik 
-        //printf("params i = %s", params[i]);
+
+        n++;
         if(params[i] == NULL) {
-            params[i] = NULL;
+          //  params[i] = NULL;
             break;
         }
     }
-    return (sizeof(params)/sizeof(int)) ; //returns the length
+    // return (sizeof(params)/sizeof(int)) ; //returns the length
+    return (n - 1) ; //returns the length
+
 }
 
 //split the command into an array of params
@@ -123,7 +127,7 @@ int main(int argc, char *argv[])
     do {
 
         int j = parsecmd(input, params); //parsing of cmd into params array
-        printf(" %d\n", j);
+        printf("%d\n", j);
 
         for (int i = 0; i < sizeof(builtin_isItCMD) / sizeof(char *); i++) { //searching in builtin_isItCMD 
             if (strcmp(params[0], builtin_isItCMD[i]) == 0) {
@@ -131,12 +135,8 @@ int main(int argc, char *argv[])
             }
         }
 
-    	for(int i = 0; i < j - 1; i++) { 
+    	for(int i = 0; i < j; i++) { 
             
-            // printf("built in: %s \n", builtInCmd);
-            // for ( )
-            // if ()
-
             if (strcmp(builtInCmd, "false") != 0) {
                 if((strcmp(params[0], "exit") == 0)) {
 
