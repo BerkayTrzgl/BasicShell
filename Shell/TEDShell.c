@@ -42,12 +42,6 @@ int shell_cd()
 
 //executes the command in a threaded fashion for interactive mode
 void *execute() {
-
-    //for(int i =0; i<(sizeof params / sizeof *params); i++){
-    //c }
-	//system(params[a]);
-	//execv("/Users/berkayterzioglu/Desktop/HW1/TEDShell", params);
-
     pid_t pid;
     pid = fork();
 
@@ -93,17 +87,6 @@ int parsecmd(char* input, char** params) {
 
 }
 
-//split the command into an array of params
-// int parsecmd(char* cmd, char** params) {
-//     int i,
-// 	n=-1;
-//     for(i=0; i<MAX_PARAMS; i++) {
-//         params[i] = strsep(&cmd, ";");
-//         n++;
-//         if(params[i] == NULL) break;
-//     }
-//     return(n);//returns the length
-// }
 
 char *builtin_isItCMD[] = {
     "cd",
@@ -127,7 +110,7 @@ int main(int argc, char *argv[])
     do {
 
         int j = parsecmd(input, params); //parsing of cmd into params array
-        printf("%d\n", j);
+       // printf("%d\n", j);
 
         for (int i = 0; i < sizeof(builtin_isItCMD) / sizeof(char *); i++) { //searching in builtin_isItCMD 
             if (strcmp(params[0], builtin_isItCMD[i]) == 0) {
@@ -137,16 +120,15 @@ int main(int argc, char *argv[])
 
     	for(int i = 0; i < j; i++) { 
             
+            //for built in
             if (strcmp(builtInCmd, "false") != 0) {
+
                 if((strcmp(params[0], "exit") == 0)) {
 
                     if(params[1] == NULL) {
                         printf("Bye bye...\n");
 
-                        int ls = pthread_create(&threads[i],
-                                                        NULL,
-                                                        quit,
-                                                        (void *)(intptr_t)i);
+                        int ls = pthread_create(&threads[i], NULL, quit, (void *)(intptr_t)i);
 
                     } else {
                         printf("An error has occurred\n");
@@ -155,62 +137,47 @@ int main(int argc, char *argv[])
                     strcpy(builtInCmd, "false"); // checking for built or not
 
                 } else if (strcmp(params[0], "cd") == 0){
-                        int ls = pthread_create(&threads[i],
-                                                        NULL,
-                                                        shell_cd,
-                                                        (void *)(intptr_t)i);
-                    strcpy(builtInCmd, "false");
+                        int ls = pthread_create(&threads[i], NULL, shell_cd, (void *)(intptr_t)i); 
+                        strcpy(builtInCmd, "false");
 
                 } else if (strcmp(params[0], "path") == 0) {
-                    
-                    
+                       
                     strcpy(builtInCmd, "false");
-
                 }
 
             } else if (strcmp(builtInCmd, "false") == 0) {
 
-                //for (int m = 0; m < j -1; m++) {  // ">" method
-                   //  printf(" zaaaa xd bu params2: %s bu da j: %d \n",params[2], j );
-                     if (strcmp(params[i], ">") == 0) {
-                         printf("tru mu");
-                         strcpy(file, params[i+1]);
-                         printf("%s \n", file);
-                         fptr = fopen(file, "w");
+               // for (int m = 0; m < j; m++) {  // ">" method
+                    //printf("params2: %s bu da j: %d buda m: %d \n",params[m], j, m);
+                    if (strcmp(params[i], ">") == 0) {
+                        strcpy(file, params[i + 1]);
+                        fptr = fopen(file, "w");
                         
-                         if (fptr == NULL) {
+                        if (fptr == NULL) {
                              printf("Error!");   
                              exit(1);             
-                         }
-                         // fprintf(fptr,"%d",num);
-                         // fclose(fptr);
+                        }
+                        //fprintf(fptr,"%d",num);
+                        //fclose(fptr);
+                        //fgets(file, sizeof(file), stdin);
 
-                         if(fgets(file, 1000 , stdin) != NULL){
-                             //puts(file);
-                             fwrite(execute, 1, sizeof(file), fptr);
-                             printf("%s\n", file);
-                             fclose(fptr);
-                         }
+                        //fputs(execute, fptr);
+                        //printf("fgets mi \n");
+                        //fprintf(fptr, "%s", file);
+
+                        fwrite(stdout, 1000, sizeof(file), fptr);
+                        // printf("%s\n", file);
+                        fclose(fptr);
+                         
                     }
-                //}
+              //  }
 
                 if (strcmp(params[0], "ls") == 0) {
-                    int ls = pthread_create(&threads[i],
-                                                    NULL,
-                                                    execute,
-                                                    (void *)(intptr_t)i);
-
+                    int ls = pthread_create(&threads[i], NULL, execute, (void *)(intptr_t)i);
                     strcpy(builtInCmd, "false");
 
-
-
                 } else {
-                    
-                    int ls = pthread_create(&threads[i],
-                                                    NULL,
-                                                    execute,
-                                                    (void *)(intptr_t)i);
-
+                    int ls = pthread_create(&threads[i], NULL, execute, (void *)(intptr_t)i);
                     strcpy(builtInCmd, "false");
 
 
